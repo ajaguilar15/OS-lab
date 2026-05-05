@@ -1,0 +1,9 @@
+File on disk
+   ↓
+mmap()
+   ↓
+File is mapped into virtual memory
+   ↓
+Program accesses file like an array
+   ↓
+OS loads needed pages on demand
