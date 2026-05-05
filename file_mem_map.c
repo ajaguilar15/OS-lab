@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
     if (argc != 2)
     {
-        fprint(stderr, "Usage: %s filename\n", argv[]);
+        fprintf(stderr, "Usage: %s filename\n", argv[0]);
         return 1;
     }
     
@@ -34,14 +34,14 @@ int main(int argc, char *argv[])
 
     char *data = mmap(NULL, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
 
-    if (data = MAP_FAILED)
+    if (data == MAP_FAILED)
     {
         perror("mmap");
         close(fd);
         return 1;
     }
 
-    printf("File size: %zu bytes\n, file_size");
+    printf("File size: %zu bytes\n", file_size);
     printf("Mapped file starts at virtual address: %p\n\n", (void *)data);
 
     printf("Reading file every 4096 bytes:\n\n");
