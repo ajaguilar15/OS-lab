@@ -89,10 +89,10 @@ int main(int argc, char *argv[])
 
     char buffer[CHUNK_SIZE];
 
-    // Fill buffer with repeating pattern (A-Z)
+    // Fill buffer with random pattern (A-Z)
     for (int i = 0; i < CHUNK_SIZE; i++)
     {
-        buffer[i] = 'A' + (i % 26);
+        buffer[i] = 'A' +  rand() % 26;
     }
 
     unsigned long long bytes_written = 0;
