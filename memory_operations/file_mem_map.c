@@ -5,6 +5,8 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 
+#define PAGE_SIZE 4096
+
 int main(int argc, char *argv[])
 {
     if (argc != 2)
@@ -51,16 +53,16 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    FILE *out = fopen(out_filename, "w")
+    FILE *out = fopen(output_filename, "w");
 
     if (out == NULL)
     {
-        perro("fopen")
+        perror("fopen");
         munmap(data, file_size);
         close(fd);
         return 1;
     }
-    
+
     fprintf(out, "Input file: %s\n", input_filename);
     fprintf(out, "File size: %zu bytes\n", file_size);
     fprintf(out, "Mapped file starts at virtual address: %p\n\n", (void *)data);
