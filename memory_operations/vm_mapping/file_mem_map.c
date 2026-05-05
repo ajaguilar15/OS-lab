@@ -11,7 +11,11 @@ int main(int argc, char *argv[])
 {
     if (argc != 3)
     {
+<<<<<<< HEAD
         fprintf(stderr, "Usage: %s inpput_file output_file\n", argv[0]);
+=======
+        fprintf(stderr, "Usage: %s input_file output_file\n", argv[0]);
+>>>>>>> 625c175 (merge)
         return 1;
     }
 
