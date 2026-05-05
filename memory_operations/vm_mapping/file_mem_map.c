@@ -1,3 +1,17 @@
+/*
+ * file_mem_map.c
+ *
+ * Maps a file into virtual memory using mmap() and inspects it
+ * page-by-page to demonstrate paging behavior.
+ *
+ * Usage:
+ *   ./file_mem_map input_file output_file
+ *
+ * Notes:
+ * - Reads one byte per page (default 4 KB) to illustrate page boundaries
+ * - Uses MAP_PRIVATE to avoid modifying the original file
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -5,25 +19,21 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 
-#define PAGE_SIZE 4096
+#define PAGE_SIZE 4096   // Typical Linux page size
 
 int main(int argc, char *argv[])
 {
     if (argc != 3)
     {
-<<<<<<< HEAD
-        fprintf(stderr, "Usage: %s inpput_file output_file\n", argv[0]);
-=======
         fprintf(stderr, "Usage: %s input_file output_file\n", argv[0]);
->>>>>>> 625c175 (merge)
         return 1;
     }
 
     char *input_filename = argv[1];
     char *output_filename = argv[2];
-    
-    int fd = open(input_filename, O_RDONLY);
 
+    // Open file in read-only mode (no modification intended)
+    int fd = open(input_filename, O_RDONLY);
     if (fd == -1)
     {
         perror("open");
@@ -32,6 +42,7 @@ int main(int argc, char *argv[])
 
     struct stat file_info;
 
+    // Retrieve file size for mapping
     if (fstat(fd, &file_info) == -1)
     {
         perror("fstat");
@@ -48,8 +59,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    // Map file into virtual memory (demand-paged by OS)
     char *data = mmap(NULL, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
-
     if (data == MAP_FAILED)
     {
         perror("mmap");
@@ -58,7 +69,6 @@ int main(int argc, char *argv[])
     }
 
     FILE *out = fopen(output_filename, "w");
-
     if (out == NULL)
     {
         perror("fopen");
@@ -73,6 +83,8 @@ int main(int argc, char *argv[])
 
     fprintf(out, "Reading file every %d bytes:\n\n", PAGE_SIZE);
 
+    // Step through memory one page at a time
+    // This highlights page-aligned address changes (0x1000 increments)
     for (size_t i = 0; i < file_size; i += PAGE_SIZE)
     {
         fprintf(out,
@@ -83,6 +95,8 @@ int main(int argc, char *argv[])
     }
 
     fclose(out);
+
+    // Cleanup: unmap memory and close file descriptor
     munmap(data, file_size);
     close(fd);
 

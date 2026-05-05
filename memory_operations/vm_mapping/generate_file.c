@@ -1,12 +1,15 @@
 /*
  * generate_file.c
  *
- * Creates a text file with a user-specified size.
+ * Generates a file of a specified size filled with predictable data.
  *
  * Usage:
  *   ./generate_file output.txt 5 KB
- *   ./generate_file output.txt 100 MB
- *   ./generate_file output.txt 1 GB
+ *
+ * Notes:
+ * - Size must be an integer
+ * - Maximum size: 1 GB
+ * - Writes in 4 KB chunks to mimic page-sized writes
  */
 
 #include <stdio.h>
@@ -14,23 +17,20 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAX_SIZE_BYTES 1073741824ULL   // 1 GB
-#define CHUNK_SIZE 4096
+#define MAX_SIZE_BYTES 1073741824ULL   // 1 GB limit
+#define CHUNK_SIZE 4096                // Matches typical page size
 
+// Converts unit string to byte multiplier
 unsigned long long get_multiplier(const char *unit)
 {
-    if (strcmp(unit, "B") == 0)
-        return 1ULL;
-    else if (strcmp(unit, "KB") == 0)
-        return 1024ULL;
-    else if (strcmp(unit, "MB") == 0)
-        return 1024ULL * 1024ULL;
-    else if (strcmp(unit, "GB") == 0)
-        return 1024ULL * 1024ULL * 1024ULL;
-
+    if (strcmp(unit, "B") == 0) return 1ULL;
+    if (strcmp(unit, "KB") == 0) return 1024ULL;
+    if (strcmp(unit, "MB") == 0) return 1024ULL * 1024ULL;
+    if (strcmp(unit, "GB") == 0) return 1024ULL * 1024ULL * 1024ULL;
     return 0;
 }
 
+// Validates that input string contains only digits
 int is_integer(const char *str)
 {
     if (str == NULL || *str == '\0')
@@ -50,7 +50,6 @@ int main(int argc, char *argv[])
     if (argc != 4)
     {
         fprintf(stderr, "Usage: %s output_file size unit\n", argv[0]);
-        fprintf(stderr, "Example: %s test.txt 5 KB\n", argv[0]);
         return 1;
     }
 
@@ -77,12 +76,11 @@ int main(int argc, char *argv[])
 
     if (total_bytes == 0 || total_bytes > MAX_SIZE_BYTES)
     {
-        fprintf(stderr, "Error: file size must be greater than 0 and at most 1 GB.\n");
+        fprintf(stderr, "Error: file size must be between 1 byte and 1 GB.\n");
         return 1;
     }
 
     FILE *fp = fopen(filename, "w");
-
     if (fp == NULL)
     {
         perror("fopen");
@@ -91,6 +89,7 @@ int main(int argc, char *argv[])
 
     char buffer[CHUNK_SIZE];
 
+    // Fill buffer with repeating pattern (A-Z)
     for (int i = 0; i < CHUNK_SIZE; i++)
     {
         buffer[i] = 'A' + (i % 26);
@@ -98,6 +97,7 @@ int main(int argc, char *argv[])
 
     unsigned long long bytes_written = 0;
 
+    // Write file in chunks to control memory usage
     while (bytes_written < total_bytes)
     {
         unsigned long long remaining = total_bytes - bytes_written;
