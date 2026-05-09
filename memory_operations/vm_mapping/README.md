@@ -4,6 +4,7 @@ This project demonstrates how files are created and mapped into memory using `mm
 
 ## 📦 Files
 
+* `makefile` → compiles both c files and cleans executables.
 * `generate_file.c` → creates a file of a specified size
 * `file_mem_map.c` → maps the file into memory and prints page-level address information
 
@@ -11,12 +12,7 @@ This project demonstrates how files are created and mapped into memory using `mm
 
 ## ⚙️ Compilation
 
-Compile both programs using `gcc`:
-
-```
-gcc -Wall -Wextra -o generate_file generate_file.c
-gcc -Wall -Wextra -o file_mem_map file_mem_map.c
-```
+Compile both programs using `make`:
 
 ---
 
@@ -69,6 +65,12 @@ gcc -Wall -Wextra -o file_mem_map file_mem_map.c
 ```
 cat out.txt
 ```
+
+---
+
+## 🧹 Clean Up
+
+Remove the executable with `make clean`:
 
 ---
 
